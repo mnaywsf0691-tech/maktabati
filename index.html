@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1220" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>مكتبتي</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Splash -->
+  <div id="splash" class="splash">
+    <div class="splash-inner">
+      <img src="assets/logo.svg" alt="مكتبتي" class="splash-logo" />
+      <h1 class="splash-title">مكتبتي</h1>
+      <p class="splash-sub">مكتبتك الذكية لتنظيم الكتب والدراسة</p>
+      <p class="splash-credit">دكتور يوسف مَعَنَّا</p>
+      <div class="splash-loader"><span></span></div>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="assets/logo.svg" alt="مكتبتي" class="brand-logo" />
+        <div>
+          <div class="brand-name">مكتبتي</div>
+          <div class="brand-tag">إدارة المكتبة والدراسة</div>
+          <div class="brand-credit">دكتور يوسف مَعَنَّا</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="library"><span class="icon">📚</span> المكتبة</button>
+        <button class="nav-item" data-view="categories"><span class="icon">🗂️</span> الأقسام</button>
+        <button class="nav-item" data-view="planner"><span class="icon">⏱️</span> منظم الدراسة</button>
+        <button class="nav-item" data-view="assistant"><span class="icon">🧠</span> المساعد الذكي</button>
+        <button class="nav-item" data-view="settings"><span class="icon">⚙️</span> الإعدادات</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div id="statsMini" class="stats-mini"></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h2 id="viewTitle">المكتبة</h2>
+          <div id="viewSubtitle" class="subtitle">رفوف كتبك في مكان واحد</div>
+        </div>
+        <div class="topbar-actions" id="topbarActions"></div>
+      </header>
+
+      <section id="view-library" class="view active">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <input id="searchInput" type="search" placeholder="ابحث عن كتاب..." />
+          </div>
+          <select id="categoryFilter"><option value="">كل الأقسام</option></select>
+          <select id="sortSelect">
+            <option value="title">ترتيب: الاسم</option>
+            <option value="recent">ترتيب: الأحدث</option>
+            <option value="category">ترتيب: القسم</option>
+            <option value="size">ترتيب: الحجم</option>
+          </select>
+          <label class="btn btn-secondary file-btn">
+            <input id="importFiles" type="file" multiple hidden />
+            إضافة كتب
+          </label>
+          <label class="btn btn-secondary file-btn">
+            <input id="importFolder" type="file" webkitdirectory directory multiple hidden />
+            استيراد مجلد
+          </label>
+        </div>
+        <div id="libraryStats" class="library-stats"></div>
+        <div id="shelvesContainer" class="shelves"></div>
+      </section>
+
+      <section id="view-categories" class="view">
+        <div class="panel-grid">
+          <div class="panel">
+            <h3>إدارة الأقسام</h3>
+            <div class="row gap">
+              <input id="newCategoryName" type="text" placeholder="اسم قسم جديد (مثال: الطب، الفلسفة)" />
+              <button id="addCategoryBtn" class="btn btn-primary">إضافة قسم</button>
+            </div>
+            <div id="categoriesList" class="categories-list"></div>
+          </div>
+          <div class="panel">
+            <h3>تصنيف الكتب</h3>
+            <p class="muted">اختر كتابًا لتعيين قسم له أو نقلِه بين الأقسام.</p>
+            <div class="row gap">
+              <select id="assignBookSelect"></select>
+              <select id="assignCategorySelect"></select>
+              <button id="assignCategoryBtn" class="btn btn-primary">تعيين</button>
+            </div>
+            <div id="uncategorizedList" class="book-assign-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-planner" class="view">
+        <div class="panel-grid">
+          <div class="panel">
+            <h3>خطة دراسة جديدة</h3>
+            <div class="form-grid">
+              <label>اسم الخطة<input id="planName" type="text" placeholder="مثال: إنهاء كتاب الفلسفة" /></label>
+              <label>الكتاب/المادة<input id="planMaterial" type="text" placeholder="اسم الكتاب أو المادة" /></label>
+              <label>إجمالي الكمية<input id="planTotal" type="number" min="1" placeholder="مثال: 300" /></label>
+              <label>وحدة القياس<input id="planUnit" type="text" placeholder="صفحة / فصل / سؤال" value="صفحة" /></label>
+              <label>عدد الأيام<input id="planDays" type="number" min="1" placeholder="مثال: 10" /></label>
+              <label>تاريخ البداية<input id="planStart" type="date" /></label>
+              <label>وقت الجلسة (دقائق)<input id="planSession" type="number" min="5" value="45" /></label>
+            </div>
+            <div class="row gap" style="margin-top:12px;">
+              <button id="createPlanBtn" class="btn btn-primary">إنشاء خطة وتقسيم الكمية</button>
+              <button id="smartPlanBtn" class="btn btn-secondary">اقتراح ذكي للخطة</button>
+            </div>
+            <div id="planPreview" class="plan-preview"></div>
+          </div>
+          <div class="panel">
+            <h3>مؤقت التركيز (بومودورو)</h3>
+            <div class="timer-box">
+              <div id="timerDisplay" class="timer-display">25:00</div>
+              <div class="row gap center">
+                <button id="timerStart" class="btn btn-primary">بدء</button>
+                <button id="timerPause" class="btn btn-secondary">إيقاف مؤقت</button>
+                <button id="timerReset" class="btn btn-secondary">إعادة ضبط</button>
+              </div>
+              <div class="row gap center" style="margin-top:10px;">
+                <button class="btn chip" data-min="25">تركيز 25</button>
+                <button class="btn chip" data-min="45">دراسة 45</button>
+                <button class="btn chip" data-min="5">استراحة 5</button>
+                <button class="btn chip" data-min="15">استراحة 15</button>
+              </div>
+              <div id="timerStatus" class="muted center" style="margin-top:8px;">جاهز للبدء</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px;">
+          <h3>خططي الدراسية</h3>
+          <div id="plansList" class="plans-list"></div>
+        </div>
+      </section>
+
+      <section id="view-assistant" class="view">
+        <div class="panel-grid">
+          <div class="panel">
+            <h3>المساعد الذكي</h3>
+            <p class="muted">تحليل وتصنيف واقتراحات ذكية لتحسين تنظيم مكتبتك ودراستك بدقة أعلى (يعمل محليًا داخل التطبيق).</p>
+            <div class="row gap wrap">
+              <button id="aiCategorizeBtn" class="btn btn-primary">تصنيف تلقائي ذكي للكتب</button>
+              <button id="aiInsightsBtn" class="btn btn-secondary">تحليل المكتبة واقتراحات</button>
+              <button id="aiPlanBtn" class="btn btn-secondary">اقتراح خطة دراسة ذكية</button>
+            </div>
+            <div id="aiOutput" class="ai-output"></div>
+          </div>
+          <div class="panel">
+            <h3>دقة التنظيم</h3>
+            <div id="aiMetrics" class="metrics"></div>
+            <h3 style="margin-top:16px;">اقتراحات سريعة</h3>
+            <ul id="aiTips" class="tips"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view">
+        <div class="panel">
+          <h3>الإعدادات والبيانات</h3>
+          <div class="row gap wrap">
+            <button id="exportBtn" class="btn btn-secondary">تصدير بيانات المكتبة</button>
+            <label class="btn btn-secondary file-btn"><input id="importData" type="file" accept=".json" hidden />استيراد بيانات</label>
+            <button id="resetBtn" class="btn btn-danger">إعادة ضبط بيانات التطبيق</button>
+          </div>
+          <p class="muted" style="margin-top:12px;">لإضافة كتبك، استخدم "إضافة كتب" أو "استيراد مجلد" من تبويب المكتبة. يمكنك تثبيت التطبيق على هاتفك (إضافة إلى الشاشة الرئيسية) عند فتحه عبر متصفح. يتم حفظ تنظيمك وخططك وملاحظاتك محليًا على هذا الجهاز.</p>
+          <div id="settingsInfo" class="settings-info"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Book Modal -->
+  <div id="bookModal" class="modal hidden">
+    <div class="modal-backdrop" data-close="modal"></div>
+    <div class="modal-card modal-large">
+      <div class="modal-header">
+        <h3 id="modalBookTitle">كتاب</h3>
+        <button class="icon-btn" data-close="modal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="book-detail-grid">
+          <div class="book-detail-meta">
+            <div id="modalBookMeta"></div>
+            <div class="row gap wrap" style="margin-top:10px;">
+              <select id="modalCategorySelect"></select>
+              <button id="modalSaveCategory" class="btn btn-secondary">حفظ القسم</button>
+            </div>
+            <div class="row gap wrap" style="margin-top:10px;">
+              <button id="openExternalBtn" class="btn btn-secondary">فتح في النظام</button>
+              <button id="deleteBookBtn" class="btn btn-danger">إزالة من المكتبة</button>
+            </div>
+            <hr/>
+            <h4>ملاحظات وتمييز</h4>
+            <textarea id="bookNotes" rows="6" placeholder="اكتب ملاحظاتك هنا..."></textarea>
+            <div class="row gap" style="margin-top:8px;">
+              <input id="highlightText" type="text" placeholder="نص/سطر لتمييزه (هايلايتر)" />
+              <button id="addHighlightBtn" class="btn btn-secondary">تمييز</button>
+            </div>
+            <div id="highlightsList" class="highlights-list"></div>
+            <button id="saveNotesBtn" class="btn btn-primary" style="margin-top:8px;">حفظ الملاحظات</button>
+          </div>
+          <div class="book-detail-reader">
+            <div class="reader-toolbar row gap wrap">
+              <button id="editContentBtn" class="btn btn-secondary">تعديل المحتوى النصي</button>
+              <button id="saveContentBtn" class="btn btn-primary hidden">حفظ التعديلات</button>
+              <button id="cancelEditBtn" class="btn btn-secondary hidden">إلغاء</button>
+              <span id="readerHint" class="muted"></span>
+            </div>
+            <div id="readerArea" class="reader-area"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <nav class="bottom-nav" aria-label="التنقل">
+    <button class="nav-item active" data-view="library"><span class="icon">📚</span><span>المكتبة</span></button>
+    <button class="nav-item" data-view="categories"><span class="icon">🗂️</span><span>الأقسام</span></button>
+    <button class="nav-item" data-view="planner"><span class="icon">⏱️</span><span>الدراسة</span></button>
+    <button class="nav-item" data-view="assistant"><span class="icon">🧠</span><span>الذكي</span></button>
+    <button class="nav-item" data-view="settings"><span class="icon">⚙️</span><span>الإعدادات</span></button>
+  </nav>
+
+  <script src="data/auto-library.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>
